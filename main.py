@@ -1,11 +1,13 @@
+# https://towardsdatascience.com/kats-a-generalizable-framework-to-analyze-time-series-data-in-python-3c8d21efe057
+
 ## Structure ##
 
 # Imports
 from kats.consts import TimeSeriesData
 from kats.detectors.cusum_detection import CUSUMDetector
 from kats.detectors.outlier import OutlierDetector
+import matplotlib.pyplot as plt
 import pandas as pd
-
 
 # Functions
 def import_data(file_path):
@@ -28,10 +30,21 @@ def create_team_ts(data, team_name='MINNESOTA TIMBERWOLVES', age_field='Average_
     ts = TimeSeriesData(df=data, time_col_name=date_field)
     return ts
 
+def CUSUM_detect(ts, team):
+    detector = CUSUMDetector(ts)
 
+    change_points = detector.detector(change_directions=["increase", "decrease"])
+    for i, x in enumerate(change_points):
+        if i > 0:
+            print(i)
+            print(team)
+    # try: print("The " + team + " change point(s) are on", change_points[0].start_time)
+    # except: pass
 
-
-
+    # plot the results
+    # plt.xticks(rotation=45)
+    # detector.plot(change_points)
+    # plt.show()
 
 
 
@@ -48,8 +61,16 @@ if __name__ == '__main__':
     ####  cont.... eventually, i could implement this into the site possibly?
 
     # data prep by team / field
-    MIN_df = create_team_ts(df, 'MINNESOTA TIMBERWOLVES', 'Average_Age_by_Total_Min')
-    print(MIN_df)
+    # MIN_df = create_team_ts(df, 'MINNESOTA TIMBERWOLVES', 'Average_Age_by_Total_Min')
+    # CUSUM_detect(MIN_df, "MINNESOTA TIMBERWOLVES")
+
+    ## iteration
+    for team in team_names:
+        team_df = create_team_ts(df, team, 'Average_Age')
+        CUSUM_detect(team_df, team)
+    
+
+    
 
 
 
